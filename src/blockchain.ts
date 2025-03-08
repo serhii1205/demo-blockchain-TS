@@ -30,7 +30,17 @@ class BlockChain implements IBlockChain {
     hashBlock = (previousBlockHash: string, currentBlockData: ITransaction[], nonce: number) => {
         const stringifiedData = previousBlockHash + JSON.stringify(currentBlockData) + nonce;
         return sha256(stringifiedData);
-    }; 
+    };
+    proofOfWork = (previousBlockHash: string, currentBlockData: ITransaction[]) => {
+        let nonce = 0;
+        let hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
+        while (hash.substring(0, 4) !== '0000') {
+            nonce++;
+            hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
+        }
+        console.log("proofOfWork >>>", hash , nonce);
+        return nonce;
+    };
 
 
     constructor() {
