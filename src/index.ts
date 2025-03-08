@@ -2,14 +2,15 @@ const BlockChain = require('./blockchain');
 
 const bitcoin = new BlockChain();
 
-bitcoin.createNewBlock(2389, '', '90AND90N9N');
+//Testing hashing blocks
 
-bitcoin.createNewTransaction(10, 'USER10002121', 'USER200002321');
-bitcoin.createNewTransaction(15, 'USER10002121', 'USER200002321');
-bitcoin.createNewTransaction(20, 'USER10002121', 'USER200002321');
+const previousBlockHash = '765NTY5390N9N';
+const currentBlockData = [
+    {amunt: 10, sender: '765NTY5390N29847', recipient: '765NTY5390N29838'},
+    {amunt: 50, sender: '765NTY5390N1234', recipient: '765NTY5390KKKIU291'},
+    {amunt: 50, sender: '888KJHDIUYD9832', recipient: '765NTY5MMM90KKKIU291'},
+];
 
-bitcoin.createNewBlock(2551, '90AND90N32N', '90AND90N9T23');
+const nonce = 120;
 
-console.log('bitcoin >>>',bitcoin);
-
-console.log('last block >>>', bitcoin.getLastBlock());
+console.log(bitcoin.hashBlock(previousBlockHash, currentBlockData, nonce));

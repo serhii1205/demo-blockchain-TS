@@ -1,3 +1,4 @@
+const sha256 = require('sha256');
 import { IBlockChain, IBlock, ITransaction } from "./types";
 
 class BlockChain implements IBlockChain {
@@ -25,7 +26,11 @@ class BlockChain implements IBlockChain {
         });
 
         return this.getLastBlock()['index'] + 1;
-    } 
+    }
+    hashBlock = (previousBlockHash: string, currentBlockData: ITransaction[], nonce: number) => {
+        const stringifiedData = previousBlockHash + JSON.stringify(currentBlockData) + nonce;
+        return sha256(stringifiedData);
+    }; 
 
 
     constructor() {
