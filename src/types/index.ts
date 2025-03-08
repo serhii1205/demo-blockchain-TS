@@ -19,5 +19,6 @@ export interface IBlockChain {
     createNewBlock: (nonce: number, previousBlockHash: string, hash: string) => IBlock;
     getLastBlock: () => IBlock;
     createNewTransaction: (amount: number, sender: string, recipient: string) => void;
+    hashBlock: (previousBlockHash: string, currentBlockData: ITransaction[], nonce: number) => string;
 }
 
