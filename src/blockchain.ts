@@ -1,27 +1,36 @@
-import { IBlockChain, IBlock } from "./types";
+import { IBlockChain, IBlock, ITransaction } from "./types";
 
 class BlockChain implements IBlockChain {
     chain: IBlock[] = []; 
-    newTransactions = [];
+    pendingTransactions: ITransaction[] = [];
     createNewBlock = (nonce: number, previousBlockHash: string, hash: string): IBlock => {
         const newBlock: IBlock = {
             index: this.chain.length + 1,
             timestamp: Date.now(),
-            transactions: this.newTransactions,
+            transactions: this.pendingTransactions,
             nonce,
             hash,
             previousBlockHash
         };
-        this.newTransactions = [];
+        this.pendingTransactions = [];
         this.chain.push(newBlock);
         return newBlock;
     }
-    getLastBlock = () => this.chain[this.chain.length - 1]; 
+    getLastBlock = () => this.chain[this.chain.length - 1];
+    createNewTransaction = (amount: number, sender: string, recipient: string) => {
+        this.pendingTransactions.push({
+            amount,
+            sender,
+            recipient
+        });
+
+        return this.getLastBlock()['index'] + 1;
+    } 
 
 
     constructor() {
         this.chain = [];
-        this.newTransactions = [];
+        this.pendingTransactions = [];
     }
 }
 

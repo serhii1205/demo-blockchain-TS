@@ -7,10 +7,17 @@ export interface IBlock {
     previousBlockHash: string;
 }
 
+export interface ITransaction {
+    amount: number;
+    sender: string;
+    recipient: string;
+}
+
 export interface IBlockChain {
     chain: IBlock[];
-    newTransactions: any[];
+    pendingTransactions: any[];
     createNewBlock: (nonce: number, previousBlockHash: string, hash: string) => IBlock;
     getLastBlock: () => IBlock;
+    createNewTransaction: (amount: number, sender: string, recipient: string) => void;
 }
 
