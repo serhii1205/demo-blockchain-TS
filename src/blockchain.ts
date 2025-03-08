@@ -38,7 +38,6 @@ class BlockChain implements IBlockChain {
             nonce++;
             hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
         }
-        console.log("proofOfWork >>>", hash , nonce);
         return nonce;
     };
 
@@ -46,6 +45,7 @@ class BlockChain implements IBlockChain {
     constructor() {
         this.chain = [];
         this.pendingTransactions = [];
+        this.createNewBlock(100, '0', '0'); // Genesis block creation
     }
 }
 
