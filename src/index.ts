@@ -11,6 +11,6 @@ const currentBlockData = [
     {amunt: 50, sender: '888KJHDIUYD9832', recipient: '765NTY5MMM90KKKIU291'},
 ];
 
-const nonce = 120;
+const nonce = bitcoin.proofOfWork(previousBlockHash, currentBlockData)
 
-console.log(bitcoin.hashBlock(previousBlockHash, currentBlockData, nonce));
+console.log('Check hash >>>', bitcoin.hashBlock(previousBlockHash, currentBlockData, nonce));
