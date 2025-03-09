@@ -1,5 +1,5 @@
 import sha256 from 'sha256';
-import { IBlockChain, IBlock, ITransaction } from "./types";
+import { IBlockChain, IBlock, ITransaction, ICurrentBlockData } from "./types";
 
 class BlockChain implements IBlockChain {
     chain: IBlock[] = []; 
@@ -27,11 +27,12 @@ class BlockChain implements IBlockChain {
 
         return this.getLastBlock()['index'] + 1;
     }
-    hashBlock = (previousBlockHash: string, currentBlockData: ITransaction[], nonce: number) => {
+    hashBlock = (previousBlockHash: string, currentBlockData: ICurrentBlockData, nonce: number) => {
         const stringifiedData = previousBlockHash + JSON.stringify(currentBlockData) + nonce;
         return sha256(stringifiedData);
     };
-    proofOfWork = (previousBlockHash: string, currentBlockData: ITransaction[]) => {
+    proofOfWork = (previousBlockHash: string, currentBlockData: ICurrentBlockData) => {
+        
         let nonce = 0;
         let hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
         while (hash.substring(0, 4) !== '0000') {
