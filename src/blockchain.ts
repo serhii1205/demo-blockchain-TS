@@ -1,4 +1,4 @@
-const sha256 = require('sha256');
+import sha256 from 'sha256';
 import { IBlockChain, IBlock, ITransaction } from "./types";
 
 class BlockChain implements IBlockChain {
@@ -45,7 +45,7 @@ class BlockChain implements IBlockChain {
     constructor() {
         this.chain = [];
         this.pendingTransactions = [];
-        this.createNewBlock(100, '0', '0'); // Genesis block creation
+        this.createNewBlock(100, '0', '0'); // Genesis `block creation
     }
 }
 

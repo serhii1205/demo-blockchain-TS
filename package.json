@@ -9,12 +9,17 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "watch": "tsc --watch",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts"
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/app.ts"
   },
   "dependencies": {
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "sha256": "^0.2.0"
   },
   "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/sha256": "^0.2.2",
     "eslint": "^7.0.0",
     "eslint-config-prettier": "^8.0.0",
     "eslint-plugin-prettier": "^4.0.0",
