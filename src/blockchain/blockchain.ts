@@ -1,5 +1,5 @@
 import sha256 from 'sha256';
-import { IBlockChain, IBlock, ITransaction, ICurrentBlockData } from "./types";
+import { IBlockChain, IBlock, ITransaction, ICurrentBlockData } from "../types";
 
 class BlockChain implements IBlockChain {
     chain: IBlock[] = []; 
@@ -50,4 +50,4 @@ class BlockChain implements IBlockChain {
     }
 }
 
-module.exports = BlockChain;
+export default BlockChain;

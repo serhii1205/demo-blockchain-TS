@@ -1,11 +1,11 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-require('dotenv').config();
+import * as dotenv from 'dotenv'
+import express from 'express'
+import bodyParser from 'body-parser' 
 import { generateNodeAddress } from './utils';
 
+import BlockChain from './blockchain/blockchain';
 
-const BlockChain = require('./blockchain');
-
+dotenv.config();
 const app = express();
 const port = process.env.API_PORT;
 
@@ -33,7 +33,7 @@ app.get('/mine', (req:any, res: any) => {
 	};
 
 	const nonce = tntCoin.proofOfWork(previousBlockHash, currentBlockData);
-	const blockHash = tntCoin.hashBlock(previousBlockHash, tntCoin.pendingTransactions, nonce);
+	const blockHash = tntCoin.hashBlock(previousBlockHash, currentBlockData, nonce);
 
 	tntCoin.createNewTransaction(12.5, '00', generateNodeAddress());
 
