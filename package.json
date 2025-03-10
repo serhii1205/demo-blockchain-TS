@@ -9,7 +9,11 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "watch": "tsc --watch",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/app.ts"
+    "node_1": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/networkNode.ts 3011 http://localhost:3011",
+    "node_2": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/networkNode.ts 3012 http://localhost:3012",
+    "node_3": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/networkNode.ts 3013 http://localhost:3013",
+    "node_4": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/networkNode.ts 3014 http://localhost:3014",
+    "node_5": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/networkNode.ts 3015 http://localhost:3015"
   },
   "dependencies": {
     "body-parser": "^1.20.3",

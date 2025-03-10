@@ -20,7 +20,9 @@ export interface ICurrentBlockData {
 
 export interface IBlockChain {
     chain: IBlock[];
-    pendingTransactions: any[];
+    pendingTransactions: ITransaction[];
+    currentNodeUrl: string;
+    networkNodes: string[];
     createNewBlock: (nonce: number, previousBlockHash: string, hash: string) => IBlock;
     getLastBlock: () => IBlock;
     createNewTransaction: (amount: number, sender: string, recipient: string) => void;
