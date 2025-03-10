@@ -7,7 +7,8 @@ import BlockChain from './blockchain/blockchain';
 
 dotenv.config();
 const app = express();
-const port = process.env.API_PORT;
+// const port = process.env.API_PORT;
+const port = process.argv[2] || 3000;
 
 const tntCoin = new BlockChain();
 

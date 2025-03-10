@@ -1,9 +1,12 @@
 import sha256 from 'sha256';
+const currentNodeUrl = process.argv[3];
 import { IBlockChain, IBlock, ITransaction, ICurrentBlockData } from "../types";
 
 class BlockChain implements IBlockChain {
     chain: IBlock[] = []; 
     pendingTransactions: ITransaction[] = [];
+    currentNodeUrl = '';
+    networkNodes: string[] = [];
     createNewBlock = (nonce: number, previousBlockHash: string, hash: string): IBlock => {
         const newBlock: IBlock = {
             index: this.chain.length + 1,
@@ -46,6 +49,7 @@ class BlockChain implements IBlockChain {
     constructor() {
         this.chain = [];
         this.pendingTransactions = [];
+        this.currentNodeUrl = currentNodeUrl;
         this.createNewBlock(100, '0', '0'); // Genesis `block creation
     }
 }
