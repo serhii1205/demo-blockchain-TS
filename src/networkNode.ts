@@ -69,7 +69,7 @@ app.post('/register-and-broadcast-node', (req: any, res: any) => {
 			body: JSON.stringify({ allNetworkNodes: [...tntCoin.networkNodes, tntCoin.currentNodeUrl] })
 		});
 	 }).then(data => {
-		res.json({ msg: `New node ${data} registered with network successfully`});
+		res.json({ msg: 'New node registered with network successfully'});
 	 });
 });
 
@@ -88,7 +88,16 @@ app.post('/register-node', (req: any, res: any) => {
 // register multiple odes at once
 // this endpoint will bw hit on the new node that we want to add to the network
 app.post('/register-nodes-bulk', (req: any, res: any) => {
+	const {allNetworkNodes} = req.body;
 
+	allNetworkNodes.forEach((networkNodeUrl: string) => {
+		const isNotPresentNode = !tntCoin.networkNodes.includes(networkNodeUrl);
+		const notCurrentNode = tntCoin.currentNodeUrl !== networkNodeUrl;
+		if (isNotPresentNode && notCurrentNode) {
+			tntCoin.networkNodes.push(networkNodeUrl);
+		}
+	});
+	res.json({ msg: 'Bulk registration successful'});
 });
 	
 
