@@ -1,6 +1,7 @@
 import sha256 from 'sha256';
 const currentNodeUrl = process.argv[3];
 import { IBlockChain, IBlock, ITransaction, ICurrentBlockData } from "../types";
+import {  generateTransactionId } from '../utils';
 
 class BlockChain implements IBlockChain {
     chain: IBlock[] = []; 
@@ -22,12 +23,18 @@ class BlockChain implements IBlockChain {
     }
     getLastBlock = () => this.chain[this.chain.length - 1];
     createNewTransaction = (amount: number, sender: string, recipient: string) => {
-        this.pendingTransactions.push({
+
+        const newTransaction: ITransaction = {
             amount,
             sender,
-            recipient
-        });
+            recipient,
+            transactionId: generateTransactionId()
+        };
 
+        return newTransaction;
+    }
+    addTransactionToPendingTransactions = (transaction: ITransaction) => {
+        this.pendingTransactions.push(transaction);
         return this.getLastBlock()['index'] + 1;
     }
     hashBlock = (previousBlockHash: string, currentBlockData: ICurrentBlockData, nonce: number) => {
