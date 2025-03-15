@@ -136,4 +136,19 @@ app.post('/register-nodes-bulk', (req: any, res: any) => {
 });
 	
 
+app.post('/receive-new-block', (req: any, res: any) => {
+	const {newBlock} = req.body;
+	const lastBlock = tntCoin.getLastBlock();
+	const correctHash = lastBlock.hash === newBlock.previousBlockHash;
+	const correctIndex = lastBlock.index + 1 === newBlock.index;
+
+	if (correctHash && correctIndex) {
+		tntCoin.chain.push(newBlock);
+		tntCoin.pendingTransactions = [];
+		res.json({ msg: 'New block received and accepted', newBlock });
+	} else {
+		res.json({ msg: 'New block rejected', newBlock });
+	}
+});
+
 app.listen(port, () => {console.log(`Server is running on port ${port}`)});
