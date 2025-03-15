@@ -26,6 +26,24 @@ app.post('/transaction', (req: any, res: any) => {
 	res.json({msg: `Transaction will be added in block ${blockIndex}`});
 });
 
+app.post('/transaction/broadcast', (req: any, res: any) => {
+	const {amount, sender, recipient} = req.body;
+	const newTransaction = tntCoin.createNewTransaction(amount, sender, recipient);
+	tntCoin.addTransactionToPendingTransactions(newTransaction);
+
+	const registeredNewTransactionsPromises = tntCoin.networkNodes.map(networkNodeUrl => {
+		return fetch(`${networkNodeUrl}/transaction`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(newTransaction)
+		});
+	});
+
+	Promise.all(registeredNewTransactionsPromises).then(() => {
+		res.json({msg: 'Transaction created and broadcasted successfully'});
+	})
+});
+
 app.get('/mine', (req:any, res: any) => {
     const lastBlock = tntCoin.getLastBlock();
 	const previousBlockHash = lastBlock.hash;
