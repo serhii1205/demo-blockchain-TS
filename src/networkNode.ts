@@ -4,7 +4,8 @@ import bodyParser from 'body-parser'
 import { generateNodeAddress } from './utils';
 
 import BlockChain from './blockchain/blockchain';
-
+// TODO:  impoove logging and error handling;
+// TODO:  impove structure of the project;
 dotenv.config();
 const app = express();
 // const port = process.env.API_PORT;
@@ -65,7 +66,7 @@ app.post('/register-and-broadcast-node', (req: any, res: any) => {
 		return fetch(`${nodeUrl}/register-nodes-bulk`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ networkNodes: [...tntCoin.networkNodes, tntCoin.currentNodeUrl] })
+			body: JSON.stringify({ allNetworkNodes: [...tntCoin.networkNodes, tntCoin.currentNodeUrl] })
 		});
 	 }).then(data => {
 		res.json({ msg: `New node ${data} registered with network successfully`});
@@ -74,11 +75,21 @@ app.post('/register-and-broadcast-node', (req: any, res: any) => {
 
 // register a node with the network
 app.post('/register-node', (req: any, res: any) => {
-
+	const {nodeUrl} = req.body;
+	const isNotPresentNode = !tntCoin.networkNodes.includes(nodeUrl);
+	const notCurrentNode = tntCoin.currentNodeUrl !== nodeUrl;
+	if (isNotPresentNode && notCurrentNode) {
+		tntCoin.networkNodes.push(nodeUrl);
+	}
+	
+	res.json({ msg: 'New node registered successfully'});
 });
 
 // register multiple odes at once
-app.post('/register-nodes-bulk', (req: any, res: any) => {});
+// this endpoint will bw hit on the new node that we want to add to the network
+app.post('/register-nodes-bulk', (req: any, res: any) => {
+
+});
 	
 
 app.listen(port, () => {console.log(`Server is running on port ${port}`)});
