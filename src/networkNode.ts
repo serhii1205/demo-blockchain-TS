@@ -44,7 +44,7 @@ app.post('/transaction/broadcast', (req: any, res: any) => {
 	})
 });
 
-app.get('/mine', (req:any, res: any) => {
+app.get('/mine', (req: any, res: any) => {
     const lastBlock = tntCoin.getLastBlock();
 	const previousBlockHash = lastBlock.hash;
 	const currentBlockData = {
@@ -55,11 +55,28 @@ app.get('/mine', (req:any, res: any) => {
 	const nonce = tntCoin.proofOfWork(previousBlockHash, currentBlockData);
 	const blockHash = tntCoin.hashBlock(previousBlockHash, currentBlockData, nonce);
 
-	tntCoin.createNewTransaction(12.5, '00', generateNodeAddress());
+	tntCoin.createNewTransaction(12.5, '00', generateNodeAddress()); // reward for mining
 
 	const newBlock = tntCoin.createNewBlock(nonce, previousBlockHash, blockHash);
 
-	res.json({msg: 'New block mined successfully', block: newBlock});
+	const registerNewBlockPromises = tntCoin.networkNodes.map(networkNodeUrl => {
+		return fetch(`${networkNodeUrl}/receive-new-block`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({newBlock})
+		});
+	});
+
+	Promise.all(registerNewBlockPromises).then(() => {
+		return fetch(`${tntCoin.currentNodeUrl}/transaction/broadcast`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({amount: 12.5, sender: '00', recipient: generateNodeAddress()})
+		});
+	}).then(() => {
+		res.json({msg: 'New block mined and broadcast successfully', block: newBlock});
+	});
+
 });
 
 // register a node and broadcast it the network
