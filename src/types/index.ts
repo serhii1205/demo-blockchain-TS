@@ -11,6 +11,7 @@ export interface ITransaction {
     amount: number;
     sender: string;
     recipient: string;
+    transactionId: string;
 }
 
 export interface ICurrentBlockData {
@@ -28,5 +29,6 @@ export interface IBlockChain {
     createNewTransaction: (amount: number, sender: string, recipient: string) => void;
     hashBlock: (previousBlockHash: string, currentBlockData: ICurrentBlockData, nonce: number) => string;
     proofOfWork: (previousBlockHash: string, currentBlockData: ICurrentBlockData) => number;
+    addTransactionToPendingTransactions: (transaction: ITransaction) => number;
 }
 
