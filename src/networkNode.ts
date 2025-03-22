@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv'
 import express from 'express'
 import bodyParser from 'body-parser' 
 import { generateNodeAddress } from './utils';
+import {DEFAULT_PORT, REWARD, DEFAULT_NODE_ADDRESS} from './constants';
 
 import BlockChain from './blockchain/blockchain';
 // TODO:  impoove logging and error handling;
@@ -9,7 +10,7 @@ import BlockChain from './blockchain/blockchain';
 dotenv.config();
 const app = express();
 // const port = process.env.API_PORT;
-const port = process.argv[2] || 3000;
+const port = process.argv[2] || DEFAULT_PORT;
 
 const tntCoin = new BlockChain();
 
@@ -71,7 +72,7 @@ app.get('/mine', (req: any, res: any) => {
 		return fetch(`${tntCoin.currentNodeUrl}/transaction/broadcast`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({amount: 12.5, sender: '00', recipient: generateNodeAddress()})
+			body: JSON.stringify({amount: REWARD, sender: DEFAULT_NODE_ADDRESS, recipient: generateNodeAddress()})
 		});
 	}).then(() => {
 		res.json({msg: 'New block mined and broadcast successfully', block: newBlock});

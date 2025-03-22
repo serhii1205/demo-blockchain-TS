@@ -30,5 +30,6 @@ export interface IBlockChain {
     hashBlock: (previousBlockHash: string, currentBlockData: ICurrentBlockData, nonce: number) => string;
     proofOfWork: (previousBlockHash: string, currentBlockData: ICurrentBlockData) => number;
     addTransactionToPendingTransactions: (transaction: ITransaction) => number;
+    chainIsValid: (blockchain: IBlock[]) => boolean;
 }
 

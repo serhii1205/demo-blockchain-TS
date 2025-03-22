@@ -1,7 +1,8 @@
 import sha256 from 'sha256';
 const currentNodeUrl = process.argv[3];
 import { IBlockChain, IBlock, ITransaction, ICurrentBlockData } from "../types";
-import {  generateTransactionId } from '../utils';
+import { generateTransactionId } from '../utils';
+import {VALID_HASH_PREFIX} from '../constants';
 
 class BlockChain implements IBlockChain {
     chain: IBlock[] = []; 
@@ -45,13 +46,25 @@ class BlockChain implements IBlockChain {
         
         let nonce = 0;
         let hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
-        while (hash.substring(0, 4) !== '0000') {
+        while (hash.substring(0, 4) !== VALID_HASH_PREFIX) {
             nonce++;
             hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
         }
         return nonce;
     };
 
+    chainIsValid = (blockchain: IBlock[]) =>  {
+        let validChain = true;
+        for (let i = 1; i < blockchain.length; i++) {
+            const currentBlock = blockchain[i];
+            const previousBlock = blockchain[i - 1];
+            const blockHash = this.hashBlock(previousBlock.hash, {transactions: currentBlock.transactions, index: currentBlock.index}, currentBlock.nonce);
+            if (blockHash.substring(0, 4) !== VALID_HASH_PREFIX) validChain = false;
+            if (currentBlock.previousBlockHash !== previousBlock.hash) validChain = false;
+        }
+
+        return validChain;
+    }
 
     constructor() {
         this.chain = [];
