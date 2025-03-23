@@ -2,7 +2,7 @@ import sha256 from 'sha256';
 const currentNodeUrl = process.argv[3];
 import { IBlockChain, IBlock, ITransaction, ICurrentBlockData } from "../types";
 import { generateTransactionId } from '../utils';
-import {VALID_HASH_PREFIX} from '../constants';
+import {VALID_HASH_PREFIX, GENESIS_BLOCK_HASH, GENESIS_BLOCK_NONCE, GENESIS_BLOCK_PREV_HASH} from '../constants';
 
 class BlockChain implements IBlockChain {
     chain: IBlock[] = []; 
@@ -54,23 +54,36 @@ class BlockChain implements IBlockChain {
     };
 
     chainIsValid = (blockchain: IBlock[]) =>  {
-        let validChain = true;
+        let isValidChain = true;
         for (let i = 1; i < blockchain.length; i++) {
             const currentBlock = blockchain[i];
             const previousBlock = blockchain[i - 1];
-            const blockHash = this.hashBlock(previousBlock.hash, {transactions: currentBlock.transactions, index: currentBlock.index}, currentBlock.nonce);
-            if (blockHash.substring(0, 4) !== VALID_HASH_PREFIX) validChain = false;
-            if (currentBlock.previousBlockHash !== previousBlock.hash) validChain = false;
+            const {transactions, index, nonce, previousBlockHash} = currentBlock;
+            const {hash: hashFromPrevBlock} = previousBlock;
+            const blockHash = this.hashBlock(hashFromPrevBlock, {transactions, index}, nonce);
+            if (blockHash.substring(0, 4) !== VALID_HASH_PREFIX) isValidChain = false;
+            if (previousBlockHash !== hashFromPrevBlock) isValidChain = false;
         }
 
-        return validChain;
+
+        const genesisBlock = blockchain[0];
+        const correctNonce = genesisBlock.nonce === GENESIS_BLOCK_NONCE;
+        const correctPreviousBlockHash = genesisBlock.previousBlockHash === GENESIS_BLOCK_PREV_HASH;
+        const correctHash = genesisBlock.hash === GENESIS_BLOCK_HASH;
+        const pendingTransactions = genesisBlock.transactions.length === 0;
+
+        if (!correctNonce || !correctPreviousBlockHash || !correctHash || !pendingTransactions) {
+            isValidChain = false;
+        }  
+
+        return isValidChain;
     }
 
     constructor() {
         this.chain = [];
         this.pendingTransactions = [];
         this.currentNodeUrl = currentNodeUrl;
-        this.createNewBlock(100, '0', '0'); // Genesis `block creation
+        this.createNewBlock(GENESIS_BLOCK_NONCE, GENESIS_BLOCK_PREV_HASH, GENESIS_BLOCK_HASH); // Genesis `block creation
     }
 }
 

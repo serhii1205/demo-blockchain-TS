@@ -1,17 +1,17 @@
-export interface IBlock {
-    index: number;
-    timestamp: number;
-    transactions: any[];
-    nonce: number;
-    hash: string;
-    previousBlockHash: string;
-}
-
 export interface ITransaction {
     amount: number;
     sender: string;
     recipient: string;
     transactionId: string;
+}
+
+export interface IBlock {
+    index: number;
+    timestamp: number;
+    transactions: ITransaction[];
+    nonce: number;
+    hash: string;
+    previousBlockHash: string;
 }
 
 export interface ICurrentBlockData {
