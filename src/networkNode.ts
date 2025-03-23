@@ -1,7 +1,9 @@
 import * as dotenv from 'dotenv'
 import express from 'express'
 import bodyParser from 'body-parser' 
-import { generateNodeAddress } from './utils';
+import {generateNodeAddress} from './utils';
+import {DEFAULT_PORT, REWARD, DEFAULT_NODE_ADDRESS} from './constants';
+import {IBlockChain, ITransaction} from './types';
 
 import BlockChain from './blockchain/blockchain';
 // TODO:  impoove logging and error handling;
@@ -9,7 +11,7 @@ import BlockChain from './blockchain/blockchain';
 dotenv.config();
 const app = express();
 // const port = process.env.API_PORT;
-const port = process.argv[2] || 3000;
+const port = process.argv[2] || DEFAULT_PORT;
 
 const tntCoin = new BlockChain();
 
@@ -71,7 +73,7 @@ app.get('/mine', (req: any, res: any) => {
 		return fetch(`${tntCoin.currentNodeUrl}/transaction/broadcast`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({amount: 12.5, sender: '00', recipient: generateNodeAddress()})
+			body: JSON.stringify({amount: REWARD, sender: DEFAULT_NODE_ADDRESS, recipient: generateNodeAddress()})
 		});
 	}).then(() => {
 		res.json({msg: 'New block mined and broadcast successfully', block: newBlock});
@@ -150,5 +152,41 @@ app.post('/receive-new-block', (req: any, res: any) => {
 		res.json({ msg: 'New block rejected', newBlock });
 	}
 });
+
+app.get('/consensus', (req: any, res: any) => {
+	const registerNodePromises = tntCoin.networkNodes.map(networkNodeUrl => {
+		return fetch(`${networkNodeUrl}/blockchain`, {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' },
+		});
+	});
+
+	Promise.all(registerNodePromises)
+		.then((responses) => Promise.all(responses.map((response) => response.json())))
+		.then((blockchains: IBlockChain[]) => {
+			const currentChainLength = tntCoin.chain.length;
+			let maxChainLength = currentChainLength;
+			let newLongestChain = null;
+			let newPendingTransactions: ITransaction[] = [];
+
+			blockchains.forEach((blockchain: IBlockChain) => {
+				const { chain, pendingTransactions } = blockchain;
+				if (chain.length > maxChainLength) {
+					maxChainLength = chain.length;
+					newLongestChain = chain;
+					newPendingTransactions = pendingTransactions;
+				}
+			});
+
+			if (!newLongestChain || (newLongestChain && !tntCoin.chainIsValid(newLongestChain))) {
+				res.json({ msg: 'Current chain has not been replaced', chain: tntCoin.chain });
+			} else {
+				tntCoin.chain = newLongestChain;
+				tntCoin.pendingTransactions = newPendingTransactions;
+				res.json({ msg: 'This chain has been replaced', chain: tntCoin.chain });
+			}
+		});
+});
+
 
 app.listen(port, () => {console.log(`Server is running on port ${port}`)});
